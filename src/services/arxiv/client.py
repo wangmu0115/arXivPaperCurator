@@ -3,7 +3,7 @@ import logging
 import time
 import xml.etree.ElementTree as ET
 from typing import Literal, Optional
-from urllib.parse import quote, urlencode
+from urllib.parse import quote_plus, urlencode
 
 import httpx
 
@@ -61,8 +61,8 @@ class ArxivClient:
             start: Starting index of pagination
             sort_by: Sort criteria (relevance, lastUpdatedDate, submittedDate)
             sort_order: Sort order (ascending, descending)
-            from_date: Filter papers submitted after this date (format: YYYYMMDD)
-            to_date: Filter papers submitted before this date (format: YYYYMMDD)
+            from_date: Filter papers submitted after this date (format: YYYYMMDD), `from_date` and `to_date` must be all not none.
+            to_date: Filter papers submitted before this date (format: YYYYMMDD), `from_date` and `to_date` must be all not none.
 
         Returns:
             A list of ArxivPaper objects for the configured category.
@@ -72,10 +72,8 @@ class ArxivClient:
 
         # Build search query: https://info.arxiv.org/help/api/user-manual.html#51-details-of-query-construction
         search_query = f"cat:{self.search_category}"
-        if from_date or to_date:
-            date_from = f"{from_date}0000" if from_date else "*"
-            date_to = f"{to_date}2359" if to_date else "*"
-            search_query += f" AND submittedDate:[{date_from}+TO+{date_to}]"
+        if from_date and to_date:
+            search_query += f" AND submittedDate:[{from_date}0000 TO {to_date}2359]"
 
         # Query params: https://info.arxiv.org/help/api/user-manual.html#3-structure-of-the-api
         params = {
@@ -86,7 +84,7 @@ class ArxivClient:
             "sortOrder": sort_order,
         }
         # Decode. Exclude `:+[]` characters, used for arXiv queries
-        url = f"{self.base_url}?{urlencode(params, quote_via=quote, safe=':+[]')}"
+        url = f"{self.base_url}?{urlencode(params, quote_via=quote_plus, safe=':+[]*')}"
 
         try:
             logger.info("Fetching %d %s papers from arXiv.", max_results, self.search_category)
