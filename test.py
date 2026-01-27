@@ -8,6 +8,8 @@ client = ArxivClient(settings)
 
 print(settings)
 
-result = asyncio.run(client.fetch_papers(10, from_date="20251201", to_date="20251231"))
+result = asyncio.run(client.fetch_papers_with_query("ti:transformer AND cat:cs.AI", 3))
 
-print(result)
+for paper in result:
+    print(paper)
+    # asyncio.run(client.download_pdf(paper))

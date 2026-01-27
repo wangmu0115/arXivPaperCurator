@@ -13,7 +13,7 @@ class DefaultSettings(BaseSettings):
 
 
 class ArxivSettings(DefaultSettings):
-    """arXiv API settings."""
+    """arXiv API client settings."""
 
     base_url: str = "https://export.arxiv.org/api/query"
     namespaces: dict = Field(
@@ -28,3 +28,20 @@ class ArxivSettings(DefaultSettings):
     max_results: int = 100
     search_category: str = "cs.AI"  # Default category to search
     pdf_cache_dir: str = "./data/arxiv_pdfs"
+
+
+class Settings(DefaultSettings):
+    """Application settings."""
+
+    app_version: str = "0.1.0"
+    debug: bool = True
+    environment: str = "dev"
+    service_name: str = "rag-api"
+
+    # arXiv settings
+    arxiv: ArxivSettings = Field(default_factory=ArxivSettings)
+
+
+def get_settings() -> Settings:
+    """Get application settings."""
+    return Settings()
