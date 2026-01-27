@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Copy source code
 COPY src /app/src
 
-FROM python:3.12.12-slim
+FROM python:3.12-slim
 
 EXPOSE 8000
 
