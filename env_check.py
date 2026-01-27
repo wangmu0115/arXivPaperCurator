@@ -1,13 +1,7 @@
 import subprocess
 import sys
 
-
-
-
-def check_docker():
-    
-
-
+# def check_docker():
 
 
 def check_uv():
