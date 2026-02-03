@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import BaseModel, Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -39,6 +39,13 @@ class PDFParserSettings(DefaultSettings):
     do_table_structure: bool = True
 
 
+class PostgresSettings(BaseModel):
+    db_url: PostgresDsn = "postgresql+psycopg2://rag_user:rag_password@localhost:5432/rag_db"
+    echo_sql: bool = False
+    pool_size: int = 20
+    max_overflow: int = 0
+
+
 class Settings(DefaultSettings):
     """Application settings."""
 
@@ -51,6 +58,8 @@ class Settings(DefaultSettings):
     arxiv: ArxivSettings = Field(default_factory=ArxivSettings)
     # PDF parser settings
     pdf_parser: PDFParserSettings = Field(default_factory=PDFParserSettings)
+    # Postgres SQL settings
+    postgres: PostgresSettings = Field(default_factory=PostgresSettings)
 
 
 def get_settings() -> Settings:
